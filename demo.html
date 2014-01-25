@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/RandomDungeon.js"></script>
+     
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      var dungeon = new RandomDungeon({
+        'seed'             : 1,           // int for randomize dungeon
+        'n_rows'           : 50,          // must be an odd number
+        'n_cols'           : 50,          // must be an odd number
+        'dungeon_layout'   : 'Normal',    // "U", "Box", "Cross" or Array of Array
+        'room_min'         : 6,           // minimum room size
+        'room_max'         : 10,           // maximum room size
+        'room_layout'      : "Packed",         // Packed, Scattered
+        'corridor_layout'  : 0,           // Labyrinth: 0, Straight: 100
+        'remove_deadends'  : 0,          // percentage
+        'add_stairs'       : 2,           // number of stairs
+        'map_style'        : {            // "Standard", "Black" or object
+            //'background'   : '#000000',
+            'wall'         : null,
+            'fill'         : '#000000',
+            'open'         : '#FFFFFF',
+            'open_grid'    : "#999999",
+            'door'         : '#ff0000',
+            'stair'        : '#0000ff',
+          },
+        'cell_size'        : 10,           // pixels
+      });
+      console.log(dungeon);
+      dungeon.render(canvas, {'grid': false});
+    
+      var _id, _is_room, _is_corridor;
+      $(canvas).mousemove(function render (event) {
+          var col = Math.floor(event.offsetX/dungeon.data.cell_size-0.5);
+          var row = Math.floor(event.offsetY/dungeon.data.cell_size-0.5);
+          var cell = dungeon.cells[row] && dungeon.cells[row][col];
+          var id = cell >> 15;
+          var is_room = !!(cell & 2);
+          var is_corridor = !!(cell & 4);
+    
+          if ((is_corridor || is_room) && (_id != id || _is_room != is_room || _is_corridor != is_corridor)) {
+            _id = id;
+            _is_room = is_room;
+            is_corridor = is_corridor;
+    
+            dungeon.render(canvas, {
+                'hightlight': {
+                  'room': is_room ? id : null,
+                  'corridor': is_corridor ? id : null,
+                },
+                'grid': false,
+              });
+          }
+      });
+      $(canvas).click(function render (event) {
+          var col = Math.floor(event.offsetX/dungeon.data.cell_size-0.5);
+          var row = Math.floor(event.offsetY/dungeon.data.cell_size-0.5);
+          console.log(dungeon.get_cell(row, col) || dungeon.cells[row][col]);
+      });
+    });
+  </script>
+</head>
+<body>
+  <canvas width="600" height="600" style="border: 1px solid blue; display: inline-block; vertical-align: top;" id="canvas"></canvas>
+</body>
+</html>
