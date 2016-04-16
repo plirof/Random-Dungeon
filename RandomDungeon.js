@@ -7,7 +7,8 @@
  * Creative Commons Attribution-NonCommercial 3.0 Unported License
  * http://creativecommons.org/licenses/by-nc/3.0/
  */
-(function (module){ "use strict";
+(function (module){
+  //"use strict";
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // example : options
